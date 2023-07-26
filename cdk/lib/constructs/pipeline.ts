@@ -52,6 +52,10 @@ export class Pipeline extends Construct {
           },
           commands: [
             "cd app",
+            "touch .env",
+            `TOKEN=("$aws ssm get-parameter --name watch-suggestion/token --query \"Parameter.Value\" --output text")`,
+            `echo BASE_URL="$DISTRIBUTION_ID" >> .env`,
+            `echo APP_TOKEN="$TOKEN" >> .env`,
             "npm ci",
             "npm run build",
             `aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"`,
