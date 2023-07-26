@@ -35,7 +35,7 @@ export class Cdn extends Construct {
             function: new cf.Function(this, "HeaderRewriteFunction", {
               comment: "Formats path for S3",
               code: cf.FunctionCode.fromFile({
-                filePath: "../lambdas/header-rewrite/build/index.js",
+                filePath: "../../lambdas/header-rewrite/build/index.js",
               }),
             }),
           },
