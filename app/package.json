@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export && npm run move",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "move": "mkdir _next && mv out/_next _next/_next"
+    "move": "next export && mkdir _next && mv out/_next _next/_next"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.6",
