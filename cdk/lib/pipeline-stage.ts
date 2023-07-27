@@ -8,7 +8,7 @@ export class PipelineStage extends Stage {
   public readonly distribution: CfnOutput;
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
-    const stack = new AppStack(this, "WebApp");
+    const stack = new AppStack(this, "Infrastructure");
     this.bucket = stack.bucket;
     this.distribution = stack.distribution;
   }

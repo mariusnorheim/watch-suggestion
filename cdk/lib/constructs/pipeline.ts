@@ -17,13 +17,18 @@ export class Pipeline extends Construct {
       pipelineName: "pipeline-watch-suggestion",
       selfMutation: true,
       synth: new pipelines.ShellStep("Synth", {
-        input: pipelines.CodePipelineSource.codeCommit(props.repository, "main"),
+        input: pipelines.CodePipelineSource.codeCommit(props.repository, "master"),
         commands: [
-          "cd cdk",
+          // "cd ${CODEBUILD_SRC_DIR}/cdk/lambdas/header-rewrite",
+          // "npm ci",
+          // "npm run build",
+          "mkdir -p ${CODEBUILD_SRC_DIR}/app/.next",
+          "cd ${CODEBUILD_SRC_DIR}/cdk",
           "npm ci",
           "npm run build",
           "npx cdk synth"
         ],
+        primaryOutputDirectory: "cdk/cdk.out",
       }),
       codeBuildDefaults: {
         rolePolicy: [
@@ -42,22 +47,23 @@ export class Pipeline extends Construct {
     });
 
     // Deployment stage
-    const deploy = new PipelineStage(this, "DeployFrontend");
+    const deploy = new PipelineStage(this, "Deploy");
     const deployStage = pipeline.addStage(deploy, {
       post: [
-        new pipelines.ShellStep("DeployFrontEnd", {
+        new pipelines.ShellStep("Frontend.Deploy", {
           envFromCfnOutputs: {
             BUCKET_NAME: deploy.bucket,
             DISTRIBUTION_ID: deploy.distribution,
           },
           commands: [
-            "cd app",
+            "cd ${CODEBUILD_SRC_DIR}/app",
             "touch .env",
-            `TOKEN=("$aws ssm get-parameter --name watch-suggestion/token --query \"Parameter.Value\" --output text")`,
+            "TOKEN=$(aws secretsmanager get-secret-value --secret-id /watch-suggestion/token --query SecretString --output json)",
             `echo BASE_URL="$DISTRIBUTION_ID" >> .env`,
             `echo APP_TOKEN="$TOKEN" >> .env`,
             "npm ci",
             "npm run build",
+            "aws s3 cp .next/ s3://$BUCKET_NAME --recursive",
             `aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"`,
           ],
         }),

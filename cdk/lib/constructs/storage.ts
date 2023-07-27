@@ -14,17 +14,17 @@ export class Storage extends Construct {
     });
     this.bucket = bucket;
     
-    new s3deploy.BucketDeployment(this, "NoCacheFilesDeployment", {
-      sources: [s3deploy.Source.asset("../app/out")],
-      destinationBucket: bucket,
-      cacheControl: [
-        s3deploy.CacheControl.fromString("public, max-age=0, must-revalidate"),
-      ],
-      prune: false,
-    });
+    // new s3deploy.BucketDeployment(this, "NoCacheFilesDeployment", {
+    //   sources: [s3deploy.Source.asset("../app/out")],
+    //   destinationBucket: bucket,
+    //   cacheControl: [
+    //     s3deploy.CacheControl.fromString("public, max-age=0, must-revalidate"),
+    //   ],
+    //   prune: false,
+    // });
     
     new s3deploy.BucketDeployment(this, "StaticFilesDeployment", {
-      sources: [s3deploy.Source.asset("../app/_next")],
+      sources: [s3deploy.Source.asset("../app/.next")],
       destinationBucket: bucket,
       cacheControl: [
         s3deploy.CacheControl.fromString("public, max-age=31536000, immutable"),

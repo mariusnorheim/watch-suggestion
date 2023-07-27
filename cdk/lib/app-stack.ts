@@ -18,5 +18,8 @@ export class AppStack extends Stack {
     this.distribution = new CfnOutput(this, "DistributionId", {
       value: cf.distribution.distributionId
     });
+    new CfnOutput(this, "CloudfrontUrl", {
+      value: cf.distribution.distributionDomainName
+    });
   }
 }
