@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import HeaderImage from "@public/header.png";
+//import styles from "@styles/Header.module.css";
 
 export default function HeaderComponent() {
   return (
